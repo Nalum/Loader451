@@ -1,4 +1,17 @@
 /**
+ * This script is released under the GNU GPL. See the file COPYING.
+ * The script is provided as is, with no guarantee either express or implied
+ * that it is fit for purpose. Use of the script, is entirely at the end users risk.
+ *
+ * @category Plugin
+ * @package  Loader451
+ * @author   Luke Mallon <luke.mallon@nexus451.com>
+ * @license  GNU GPL - http://www.gnu.org/licenses/gpl.txt
+ * @link     https://github.com/nalum/Loader451
+ * @version  0.1.0
+ */
+
+/**
  * Loader451
  * 
  * jQuery plugin to load/add/edit/delete the content of a webpage via ajax.
@@ -10,10 +23,6 @@
  *      $.loader451({
  *          'actionClass'   : 'Action'
  *      });
- * 
- * @version 0.1.0
- * @author  Luke Mallon <luke.mallon@nexus451.com>
- * @copy    Nexus451
  */
 
 (function($){
