@@ -13,81 +13,113 @@
 
 /**
  * Loader451
- * 
+ *
  * jQuery plugin to load/add/edit/delete the content of a webpage via ajax.
- * 
+ *
  * Min Required:
- *      jQuery Version 1.6
- * 
+ *      jQuery Version 1.7
+ *
  * Example Usage:
  *      $.loader451({
  *          'actionClass'   : 'Action'
  *      });
  */
 
-(function($){
+(function ($) {
+    "use strict";
+
     $.extend({
-        'loader451' : function(options) {
+        "loader451" : function (options) {
             var defaults = {
-                'actionClass'   : 'action',
-                'actionPath'    : '/ajax/action/',
-                'formClass'     : 'form',
-                'formPath'      : '/ajax/form/',
-                'sectionClass'  : 'section',
-                'sectionPath'   : '/ajax/section/',
-                'autoLoad'      : true,
-                'modal'         : true,
-                'validateForms' : true,
-                'submitForms'   : true,
-                'activeIcon'    : 'loader.gif'
-            };
-            var settings = $.extend({}, defaults, options);
-            
-            $('body').delegate('.' + settings.sectionClass, 'click', function(e){
-                e.preventDefault();
+                "actionClass"   : "action",
+                "actionPath"    : "/ajax/action/",
+                "formClass"     : "form",
+                "formPath"      : "/ajax/form/",
+                "sectionClass"  : "section",
+                "sectionPath"   : "/ajax/section/",
+                "autoLoad"      : true,
+                "modal"         : true,
+                "validateForms" : true,
+                "submitForms"   : true,
+                "activeIcon"    : "loader.gif",
+                "requireFields" : ".required",
+                "validEmail"    : /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/i
+            }, settings = $.extend({}, defaults, options);
+
+            $('body').on('click', '.' + settings.sectionClass, function (event) {
+                event.preventDefault();
                 var $section = $(this);
             });
-            
-            $('body').delegate('.' + settings.formClass, 'click', function(e){
-                e.preventDefault();
-                var $form = $(this);
-            });
-            
-            $('body').delegate('.' + settings.actionClass, 'click', function(e){
-                e.preventDefault();
+
+            $('body').on('click', '.' + settings.actionClass, function (event) {
+                event.preventDefault();
                 var $action = $(this);
             });
-            
+
             if (settings.validateForms || settings.submitForms) {
-                $('body').delegate('form', 'submit', function(e){
+                $('body').on('submit', 'form.' + settings.formClass, function (event) {
                     var $form = $(this), valid = true;
-                    
+
                     if (settings.submitForms) {
-                        e.preventDefault();
+                        event.preventDefault();
                     }
-                    
+
                     if (settings.validateForms) {
-                        valid = false;
-                        $form.find('.required').each(function(i, o){
-                            var $o = $(o);
-                            
-                            if ($o.val()) {
+                        $form.find(settings.requiredFields).each(function (index, object) {
+                            var $object = $(object);
+
+                            if ($object.val()) {
                                 valid = false;
                             }
                         });
                     }
-                    
+
                     if (!valid) {
-                        e.preventDefault();
+                        event.preventDefault();
                     }
-                    
+
                     if (settings.submitForms && valid) {
                         $.ajax({
-                            'method'    : 'post'
+                            "method"    : "post",
+                            "action"    : settings.formPath + $form.attr('action'),
+                            "complete"  : function (jqXHR, textStatus) {
+                                console.log(textStatus);
+
+                                if (typeof $.loader451.complete[$form.attr('id')] === "function") {
+                                    $.loader451.complete[$form.attr('id')]();
+                                }
+                            },
+                            "error"     : function (jqXHR, textStats, errorThrown) {
+                                console.log(textStatus);
+                                console.log(errorThrown);
+
+                                if (typeof $.loader451.error[$form.attr('id')] === "function") {
+                                    $.loader451.error[$form.attr('id')]();
+                                }
+                            },
+                            "success"   : function (data, textStatus, jqXHR) {
+                                console.log(data);
+                                console.log(textStatus);
+
+                                if (typeof $.loader451.success[$form.attr('id')] === "function") {
+                                    $.loader451.success[$form.attr('id')]();
+                                }
+                            }
                         });
                     }
                 });
             }
+
+            return this;
+        }
+    });
+
+    $.extend($.loader451, {
+        "complete"  : {},
+        "error"     : {},
+        "success"   : {},
+        "add"       : function (type, name, method) {
+            $.loader451[type][name] = method;
         }
     });
 })(jQuery);
