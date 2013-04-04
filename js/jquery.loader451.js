@@ -5,7 +5,7 @@
  *
  * @category Plugin
  * @package  Loader451
- * @author   Luke Mallon <luke.mallon@nexus451.com>
+ * @author   Luke Mallon <luke.mallon@lukemallon.com>
  * @license  GNU GPL - http://www.gnu.org/licenses/gpl.txt
  * @link     https://github.com/nalum/Loader451
  * @version  0.1.0
@@ -28,7 +28,7 @@
 (function ($) {
     "use strict";
 
-    $.extend({
+    $.fn.extend({
         "loader451" : function (options) {
             var defaults = {
                 "actionClass"   : "action",
@@ -114,7 +114,7 @@
         }
     });
 
-    $.extend($.loader451, {
+    $.fn.extend($.loader451, {
         "complete"  : {},
         "error"     : {},
         "success"   : {},
